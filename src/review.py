@@ -37,11 +37,11 @@ def generate_review_points(files_content, files_patches, points={}):
                     Goal: You are a nix code reviewer. You will need to generate a list of reviews that contain the corrected file based of review_points.
                     Inputs:
                         - files_content: A dictionary mapping file names to their content at the head of the PR
-                        - review_points: A dictionnary mapping review point to dictionnary of criterias that maps criteria_names to a list of example git diff (strings) that illustrate how to make files compliant with this criteria. Some times but rarely it will also be instructions, and you will have to do the same.
+                        - review_points: A dictionnary mapping review point to dictionnary of criterias that maps criteria_names to a list of example git diff (strings) OR a description/instruction that illustrate how to make files compliant with this criteria.
 
                     Outputs:
                         - file_name: key is the name of the file that needs to be reviewed, value is a dictionnary containing:
-                            - changes: a dictionnary mapping the review points used to do the change that should be made in the file to make it compliant with the review point. The change should be in the form of a git diff.
+                            - changes: a dictionnary mapping a review point with the git diff that makes the file compliant towards the review point. The change should be in the form of a git diff.
 
                         - FORMAT EXAMPLE:
                         {
@@ -75,9 +75,8 @@ def generate_review_points(files_content, files_patches, points={}):
         )
     return res.choices[0].message.content
 
-
 if __name__ == "__main__":
     files_content, files_patches = get_pr_files(prnumber=497957)
-    criteria_names = ["meta"]
+    criteria_names = ["meta", "finalAttrs"]
     points = create_review_points_dict(criteria_names)
     print(generate_review_points(files_content, files_patches, points=points))

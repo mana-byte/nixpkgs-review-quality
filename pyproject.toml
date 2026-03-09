@@ -7,4 +7,5 @@ requires-python = ">=3.13"
 dependencies = [
     "mistralai>=1.12.4",
     "pygithub>=2.8.1",
+    "sqlalchemy>=2.0.48",
 ]
