@@ -1,6 +1,7 @@
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship
 from sqlalchemy import Column, Integer, String
+from .base import Base
 
 class Example(Base):
     __tablename__ = 'examples'
