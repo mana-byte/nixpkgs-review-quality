@@ -7,5 +7,9 @@ requires-python = ">=3.13"
 dependencies = [
     "mistralai>=1.12.4",
     "pygithub>=2.8.1",
+    "pytest>=9.0.2",
     "sqlalchemy>=2.0.48",
 ]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]

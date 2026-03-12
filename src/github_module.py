@@ -3,7 +3,11 @@ from github import Github
 from github import Auth
 import os
 
-BLACK_LISTED_FILES = {"pkgs/top-level/python-packages.nix"}
+BLACK_LISTED_FILES = {
+    "pkgs/top-level/python-packages.nix",
+    "maintainers/maintainer-list.nix",
+    "pkgs/by-name/hy/hyprland/info.json"
+}
 
 @contextmanager
 def get_github_client(env_var_name="GITHUB_ACCESS_TOKEN"):
@@ -38,15 +42,16 @@ def get_pr_files(owner="NixOS", repo="nixpkgs", prnumber=0):
                 continue
             try:
                 patch = file.patch
-                # decode the content of the file at the head of the PR
                 file_content = repo.get_contents(
                     file.filename, ref=pr.head.sha
                 ).decoded_content.decode("utf-8")
-                files_content[file.filename] = file_content
-                files_patches[file.filename] = patch
+                if file_content:
+                    files_content[file.filename] = file_content
+                    files_patches[file.filename] = patch
             except Exception as e:
                 print(f"Error fetching content for {file.filename}: {e}")
     return files_content, files_patches
+
 
 if __name__ == "__main__":
     get_pr_files(prnumber=493762)
