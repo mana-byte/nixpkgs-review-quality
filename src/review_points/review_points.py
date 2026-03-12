@@ -8,17 +8,21 @@ from src.review_points.models.review_point import ReviewPoint
 
 
 if __name__ == "__main__":
-    # with get_db() as db:
-    #     review_point_repo = ReviewPointRepo(db)
-    #
-    #     review_point = ReviewPoint(
-    #         review_point_name="finalAttrs",
-    #         review_point_importance=5,
-    #         topic=REVIEW_POINTS_TOPIC.GLOBAL,
-    #     )
-    #
-    #     _ = review_point_repo.create_review_point_with_object(review_point)
-    #
+    with get_db() as db:
+        review_point_repo = ReviewPointRepo(db)
+
+        py_review_points = review_point_repo.get_review_points_by_topic(REVIEW_POINTS_TOPIC.PYTHON)
+        for review_point in py_review_points:
+            print(review_point.review_point_name, review_point.id, review_point.review_point_importance, review_point.topic)
+
+        # review_point = ReviewPoint(
+        #     review_point_name="Import Check",
+        #     review_point_importance=2,
+        #     topic=REVIEW_POINTS_TOPIC.PYTHON,
+        # )
+        #
+        # _ = review_point_repo.create_review_point_with_object(review_point)
+
     # with get_db() as db:
     #     review_point_repo = ReviewPointRepo(db)
     #     example_repo = ExampleRepo(db)
@@ -31,12 +35,3 @@ if __name__ == "__main__":
     #         review_point_id=id,
     #     )
     #     _ = example_repo.create_example_with_object(example)
-
-    with get_db() as db:
-        review_point_repo = ReviewPointRepo(db)
-        rep = review_point_repo.get_review_points_by_topic(REVIEW_POINTS_TOPIC.GLOBAL)
-        print(rep[0].review_point_name)
-
-        example_repo = ExampleRepo(db)
-        rep = example_repo.get_examples_by_review_point_id(rep[0].id)
-        print(rep[0].example)

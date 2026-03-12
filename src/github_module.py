@@ -6,8 +6,9 @@ import os
 BLACK_LISTED_FILES = {
     "pkgs/top-level/python-packages.nix",
     "maintainers/maintainer-list.nix",
-    "pkgs/by-name/hy/hyprland/info.json"
+    "pkgs/by-name/hy/hyprland/info.json",
 }
+
 
 @contextmanager
 def get_github_client(env_var_name="GITHUB_ACCESS_TOKEN"):
@@ -20,7 +21,9 @@ def get_github_client(env_var_name="GITHUB_ACCESS_TOKEN"):
         yield g
 
 
-def get_pr_files(owner="NixOS", repo="nixpkgs", prnumber=0):
+def get_pr_files(
+    prnumber: int, owner="NixOS", repo="nixpkgs"
+) -> tuple[dict[str, str], dict[str, str]]:
     """Function to get files changed in a pull request.
     Arguments:
         - owner: The owner of the repository (default: "NixOS")
