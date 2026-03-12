@@ -11,4 +11,5 @@ def get_db():
     try:
         yield db
     finally:
+        db.commit()
         db.close()

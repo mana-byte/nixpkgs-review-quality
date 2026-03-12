@@ -1,30 +1,42 @@
-import json
+from src.review_points import REVIEW_POINTS_TOPIC
+from src.review_points.repositories import example_repo
+from src.review_points.repositories.review_point_repo import ReviewPointRepo
+from src.review_points.repositories.example_repo import ExampleRepo
+from src.review_points.database.session import get_db
+from src.review_points.models.example import Example
+from src.review_points.models.review_point import ReviewPoint
 
-def read_json_file_by_criteria_name(name):
-    """Reads a JSON file and returns its content as a Python dictionary."""
-    file_path = f"src/review_points/points/{name}.json"
-    try:
-        with open(file_path, 'r') as file:
-            return json.load(file)
-    except FileNotFoundError:
-        raise Exception(f"File {file_path} not found.")
-    except json.JSONDecodeError:
-        raise Exception(f"File {file_path} is not a valid JSON.")
-    except Exception as e:
-        raise Exception(f"An error occurred while reading {file_path}: {str(e)}")
-
-def create_review_points_dict(criteria_names):
-    """Creates a dictionary of review points based on a list of criteria names."""
-    points = {}
-    for name in criteria_names:
-        try:
-            points[name] = read_json_file_by_criteria_name(name)
-        except Exception as e:
-            continue
-    return points
 
 if __name__ == "__main__":
-    criteria_names = ["finalAttrs", "meta"]
-    review_points_dict = create_review_points_dict(criteria_names)
-    print(review_points_dict)
+    # with get_db() as db:
+    #     review_point_repo = ReviewPointRepo(db)
+    #
+    #     review_point = ReviewPoint(
+    #         review_point_name="finalAttrs",
+    #         review_point_importance=5,
+    #         topic=REVIEW_POINTS_TOPIC.GLOBAL,
+    #     )
+    #
+    #     _ = review_point_repo.create_review_point_with_object(review_point)
+    #
+    # with get_db() as db:
+    #     review_point_repo = ReviewPointRepo(db)
+    #     example_repo = ExampleRepo(db)
+    #
+    #     id = review_point_repo.get_review_point_by_name("finalAttrs").id
+    #
+    #     example = Example(
+    #         example_name="finalAttrs example",
+    #         example="finalAttrs = { inherit (stdenv) stdenv; };",
+    #         review_point_id=id,
+    #     )
+    #     _ = example_repo.create_example_with_object(example)
 
+    with get_db() as db:
+        review_point_repo = ReviewPointRepo(db)
+        rep = review_point_repo.get_review_points_by_topic(REVIEW_POINTS_TOPIC.GLOBAL)
+        print(rep[0].review_point_name)
+
+        example_repo = ExampleRepo(db)
+        rep = example_repo.get_examples_by_review_point_id(rep[0].id)
+        print(rep[0].example)
