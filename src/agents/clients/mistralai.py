@@ -1,6 +1,7 @@
 from contextlib import contextmanager
 from typing import Any, Iterator, override
 from mistralai import Mistral
+import json
 
 from src.agents.clients.base_client import BaseClient
 
@@ -22,9 +23,10 @@ class MistralClient(BaseClient):
                         "content": user_prompt,
                     },
                 ],
-                response_format={"type": "json_object"},
+                response_format={"type": "text"},
             )
-            return res.choices[0].message.content
+            content = res.choices[0].message.content
+            return content
 
     @override
     @contextmanager

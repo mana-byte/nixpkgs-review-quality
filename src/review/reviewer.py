@@ -1,6 +1,7 @@
 from typing import final
 
-from src.agents.clients import AGENTS
+from src.agents import AGENTS
+from src.review.services.agent import AgentService
 from src.review_points.models.review_point import ReviewPoint
 from src.github_module import get_pr_files
 from src.review.services.example import get_raw_examples_by_review_point
@@ -80,10 +81,10 @@ class Reviewer:
             for file_name, review_points in review_points_by_file.items()
         }
 
-    def review(self, agent: AGENTS):
-
+    def review(self, agent: AGENTS, model: str):
+        agent_service = AgentService(agent, model)
 
 
 if __name__ == "__main__":
     reviewer = Reviewer(prnumber=499242)
-    reviewer.review(AGENTS.MISTRAL)
+    reviewer.review(AGENTS.MISTRAL, "thing")
