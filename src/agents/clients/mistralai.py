@@ -23,7 +23,7 @@ class MistralClient(BaseClient):
                         "content": user_prompt,
                     },
                 ],
-                response_format={"type": "text"},
+                response_format={"type": "json_object"},
             )
             content = res.choices[0].message.content
             return content

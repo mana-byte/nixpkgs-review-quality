@@ -87,9 +87,12 @@ class Reviewer:
 
     def review(self, agent: AGENTS, model: str):
         agent_service = AgentService(agent, model)
-        print(self.review_inputs)
+        for file_name, review_input in self.review_inputs.items():
+            print(f"Reviewing file: {file_name}")
+            rep = agent_service.ask_agent_for_review(review_input)
+            print(f"Review for file {file_name}:\n{rep}\n\n")
 
 
 if __name__ == "__main__":
-    reviewer = Reviewer(prnumber=499242)
-    reviewer.review(AGENTS.MISTRAL, "ministral-8b-latest")
+    reviewer = Reviewer(prnumber=497362)
+    reviewer.review(AGENTS.MISTRAL, "devstral-latest")

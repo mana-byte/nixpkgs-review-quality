@@ -53,3 +53,30 @@ ensure Nixpkgs packages follow best practices.
   }
 }
 ```
+
+### Example output
+
+```json
+{
+  "changes": [
+    {
+      "line_number": 19,
+      "before": "buildPythonPackage rec {",
+      "after": "buildPythonPackage (finalAttrs: {",
+      "explanation": "Replace 'rec' with 'finalAttrs' to use a more modern and efficient way to inherit attributes from stdenv in Nix."
+    },
+    {
+      "line_number": 24,
+      "before": "    tag = \"v${version}\";",
+      "after": "    tag = \"v${finalAttrs.version}\";",
+      "explanation": "Update the reference to 'version' to use 'finalAttrs.version' to maintain recursiveness while using finalAttrs."
+    },
+    {
+      "line_number": 65,
+      "before": "    changelog = \"https://github.com/holoviz/datashader/blob/${src.tag}/CHANGELOG.rst\";",
+      "after": "    changelog = \"https://github.com/holoviz/datashader/blob/${finalAttrs.src.tag}/CHANGELOG.rst\";",
+      "explanation": "Update the reference to 'src.tag' to use 'finalAttrs.src.tag' to maintain recursiveness while using finalAttrs."
+    }
+  ]
+}
+```
