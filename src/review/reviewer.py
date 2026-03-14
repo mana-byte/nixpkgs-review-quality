@@ -1,4 +1,4 @@
-from typing import final
+from typing import Any, final
 
 from src.agents import AGENTS
 from src.review.services.agent import AgentService
@@ -36,7 +36,7 @@ class Reviewer:
         self.files, self.patches = get_pr_files(prnumber=prnumber)
         self.topics_by_file = self.__generate_topics(self.files)
         self.review_points_by_file = self.__generate_review_points(self.topics_by_file)
-        self.rerview_input = self.__generate_final_input(self.review_points_by_file)
+        self.review_inputs = self.__generate_final_input(self.review_points_by_file)
 
     def __generate_topics(
         self, files: dict[str, str]
@@ -66,25 +66,30 @@ class Reviewer:
 
     def __generate_final_input(
         self, review_points_by_file: dict[str, list[ReviewPoint]]
-    ) -> dict[str, dict[str, dict[str, str | list[str] | None]]]:
+    ) -> dict[str, Any]:
         """
-        Private method to generate the final input for the review. For each file, it creates a dictionary mapping each review point to its instruction and examples.
+        Private method to generate the final input for the review.
+        For each file, it creates a dictionary mapping each review point to its instruction and examples.
         """
         return {
             file_name: {
-                str(review_point.review_point_name): {
-                    "instructions": str(review_point.instructions),
-                    "examples": get_raw_examples_by_review_point(review_point),
-                }
-                for review_point in review_points
+                "content": self.files[file_name],
+                "review_points": {
+                    str(review_point.review_point_name): {
+                        "instructions": str(review_point.instructions),
+                        "examples": get_raw_examples_by_review_point(review_point),
+                    }
+                    for review_point in review_points
+                },
             }
             for file_name, review_points in review_points_by_file.items()
         }
 
     def review(self, agent: AGENTS, model: str):
         agent_service = AgentService(agent, model)
+        print(self.review_inputs)
 
 
 if __name__ == "__main__":
     reviewer = Reviewer(prnumber=499242)
-    reviewer.review(AGENTS.MISTRAL, "thing")
+    reviewer.review(AGENTS.MISTRAL, "ministral-8b-latest")
