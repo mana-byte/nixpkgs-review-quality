@@ -1,5 +1,6 @@
 from typing import final
 
+from src.agents.clients import AGENTS
 from src.review_points.models.review_point import ReviewPoint
 from src.github_module import get_pr_files
 from src.review.services.example import get_raw_examples_by_review_point
@@ -23,7 +24,8 @@ class Reviewer:
         files (dict[str, str]): A dictionary mapping file names to their content at the head of the PR.
         patches (dict[str, str]): A dictionary mapping file names to their patch (diff) in the PR.
         topics_by_file (dict[str, REVIEW_POINTS_TOPIC]): A dictionary mapping file names to their identified topics.
-        review_points_by_file (dict[str, list[str]]): A dictionary mapping file names to their associated review points based on their topics.
+        review_points_by_file (dict[str, list[ReviewPoint]]): A dictionary mapping file names to their associated review points based on their topics.
+        review_input (dict[str, dict[str, dict[str, str | list[str] | None]]]): A dictionary mapping file names to their review points, where each review point is associated with its instructions and examples. This is the final input for the review process.
 
     """
 
@@ -78,10 +80,10 @@ class Reviewer:
             for file_name, review_points in review_points_by_file.items()
         }
 
-    def review(self):
-        print(self.rerview_input)
+    def review(self, agent: AGENTS):
+
 
 
 if __name__ == "__main__":
     reviewer = Reviewer(prnumber=499242)
-    reviewer.review()
+    reviewer.review(AGENTS.MISTRAL)
