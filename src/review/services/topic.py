@@ -17,10 +17,22 @@ def get_topic_by_builder_pattern(
     return
 
 
-def get_review_points_by_topic(topic: REVIEW_POINTS_TOPIC) -> list[ReviewPoint]:
-    with get_db() as db:
+def get_review_points_by_topic(
+    topic: REVIEW_POINTS_TOPIC, withGlobal: bool = True
+) -> list[ReviewPoint]:
+    """
+    Fetches review points from the database based on the provided topic. If withGlobal is True, it also includes review points from the GLOBAL topic.
+    The review points returned don't expire on commit, allowing them to be used outside the context of the database session.
+    """
+    with get_db(expire_on_commit=False) as db:
         review_point_repo = ReviewPointRepo(db)
-        return review_point_repo.get_review_points_by_topic(topic)
+        if withGlobal:
+            global_review_points = review_point_repo.get_review_points_by_topic(
+                REVIEW_POINTS_TOPIC.GLOBAL
+            )
+            topic_review_points = review_point_repo.get_review_points_by_topic(topic)
+            return global_review_points + topic_review_points
+    return review_point_repo.get_review_points_by_topic(topic)
 
 
 if __name__ == "__main__":
@@ -29,5 +41,3 @@ if __name__ == "__main__":
     files, patches = get_pr_files(prnumber=491498)
     keys = list(files.keys())
     res = get_topic_by_builder_pattern(files[keys[0]])
-    if res:
-        review_points = get_review_points_by_topic(res)

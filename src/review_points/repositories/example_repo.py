@@ -30,17 +30,12 @@ class ExampleRepo:
             .first()
         )
 
-    def get_examples_by_review_point_id(self, review_point_id: int | Column[int]) -> list[Example]:
+    def get_examples_by_review_point_id(
+        self, review_point_id: int | Column[int]
+    ) -> list[Example]:
         return (
             self.session.query(Example)
             .filter(Example.review_point_id == review_point_id)
-            .all()
-        )
-
-    def get_examples_by_review_point(self, review_point: ReviewPoint) -> list[Example]:
-        return (
-            self.session.query(Example)
-            .filter(Example.review_point_id == review_point.id)
             .all()
         )
 
