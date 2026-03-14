@@ -3,6 +3,8 @@ from sqlalchemy.orm import Session
 from src.review_points.models.example import Example
 from typing import final
 
+from src.review_points.models.review_point import ReviewPoint
+
 
 @final
 class ExampleRepo:
@@ -32,6 +34,13 @@ class ExampleRepo:
         return (
             self.session.query(Example)
             .filter(Example.review_point_id == review_point_id)
+            .all()
+        )
+
+    def get_examples_by_review_point(self, review_point: ReviewPoint) -> list[Example]:
+        return (
+            self.session.query(Example)
+            .filter(Example.review_point_id == review_point.id)
             .all()
         )
 

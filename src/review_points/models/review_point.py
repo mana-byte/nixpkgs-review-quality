@@ -8,6 +8,7 @@ class ReviewPoint(Base):
     __tablename__: str = "review_points"
     id = Column(Integer, primary_key=True)
     review_point_name = Column(String, nullable=False, unique=True)
+    instruction = Column(String, nullable=True, default=None)
     review_point_importance = Column(
         Integer,
         CheckConstraint(
