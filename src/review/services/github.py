@@ -1,8 +1,7 @@
 from contextlib import contextmanager
 from enum import Enum
 from typing import Any, final
-from github import Github
-from github import Auth
+from github import Github, Auth
 import os
 
 BLACK_LISTED_FILES = {
