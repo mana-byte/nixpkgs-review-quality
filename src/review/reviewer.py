@@ -127,12 +127,13 @@ class Reviewer:
     def submit_reviews(
         self,
         review_message: str = "",
+        additional_review_message: str = "",
     ):
         if not self.reviews or self.reviews == {}:
             raise ValueError("No reviews to submit.")
         if review_message == "":
             with open("src/review/messages/default_review_message.md", "r") as f:
-                review_message = f.read()
+                review_message = additional_review_message + "\n \n" + f.read()
 
         github_service = GitHubService()
         github_service.submit_review(
