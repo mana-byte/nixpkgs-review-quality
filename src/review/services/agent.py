@@ -1,5 +1,6 @@
 from typing import Any, final
 from src.agents import AGENTS
+import ast
 
 
 @final
@@ -17,7 +18,7 @@ class AgentService:
     def ask_agent_for_review(
         self,
         review_input: dict[str, Any],
-    ):
+    ) -> dict[str, Any]:
         """
         Ask specified agent for code review for a specific review point
         """
@@ -27,4 +28,4 @@ class AgentService:
             user_prompt=str(review_input),
             model=self.model,
         )
-        return rep
+        return ast.literal_eval(rep)

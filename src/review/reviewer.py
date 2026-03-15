@@ -30,13 +30,22 @@ class Reviewer:
 
     """
 
-    def __init__(self, prnumber: int, harshness: int = 5):
+    def __init__(
+        self,
+        prnumber: int,
+        harshness: int = 5,
+        owner: str = "NixOS",
+        repo: str = "nixpkgs",
+    ):
         self.prnumber = prnumber
         self.harshness = harshness
-        self.files, self.patches = get_pr_files(prnumber=prnumber)
+        self.files, self.patches = get_pr_files(
+            prnumber=prnumber, owner=owner, repo=repo
+        )
         self.topics_by_file = self.__generate_topics(self.files)
         self.review_points_by_file = self.__generate_review_points(self.topics_by_file)
         self.review_inputs = self.__generate_final_input(self.review_points_by_file)
+        self.reviews: dict[str, list[dict[str, str | int]]] = {}
 
     def __generate_topics(
         self, files: dict[str, str]
@@ -90,9 +99,11 @@ class Reviewer:
         for file_name, review_input in self.review_inputs.items():
             print(f"Reviewing file: {file_name}")
             rep = agent_service.ask_agent_for_review(review_input)
-            print(f"Review for file {file_name}:\n{rep}\n\n")
+            self.reviews[file_name] = rep["changes"]
+        print(self.reviews)
 
 
 if __name__ == "__main__":
-    reviewer = Reviewer(prnumber=497362)
+    # fetch pr from personal fork
+    reviewer = Reviewer(prnumber=1, owner="mana-byte")
     reviewer.review(AGENTS.MISTRAL, "devstral-latest")
