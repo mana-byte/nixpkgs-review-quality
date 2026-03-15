@@ -106,6 +106,9 @@ class GitHubService:
             repository = g.get_repo(f"{owner}/{repo}")
             pr = repository.get_pull(prnumber)
             review_comments = self.__create_suggestions_from_map(reviews)
-            _ = pr.create_review(
-                body=review_body, event=review_type.value, comments=review_comments
-            )
+            try:
+                _ = pr.create_review(
+                    body=review_body, event=review_type.value, comments=review_comments
+                )
+            except Exception as e:
+                print(f"Error submitting review: {e}")

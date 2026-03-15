@@ -6,7 +6,7 @@ ensure Nixpkgs packages follow best practices.
 ### Context
 
 - You will receive a dictionary with:
-  - The **file content** (a Nix expression).
+  - The **file content** (a Nix expression). Each line in the file will be numbered to avoid confusion.
   - **Review points**: Each review point includes:
     - **Instructions**: What to check or fix.
     - **Examples**: Before/after code snippets and explanations.

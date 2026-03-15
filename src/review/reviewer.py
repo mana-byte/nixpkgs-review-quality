@@ -2,6 +2,7 @@ from typing import Any, final
 
 from src.agents import AGENTS
 from src.review.services.agent import AgentService
+from src.review.utils import number_each_line
 from src.review_points.models.review_point import ReviewPoint
 from src.review.services.github import GitHubService
 from src.review.services.example import get_raw_examples_by_review_point
@@ -80,7 +81,7 @@ class Reviewer:
         """
         return {
             file_name: {
-                "content": self.files[file_name],
+                "content": number_each_line(self.files[file_name]),
                 "review_points": {
                     str(review_point.review_point_name): {
                         "instructions": str(review_point.instructions),
@@ -137,6 +138,7 @@ class Reviewer:
             if additional_review_message != "":
                 review_message += "\n --- \n" + additional_review_message
 
+        print(f"Submitting review of PR #{self.prnumber}")
         github_service = GitHubService()
         github_service.submit_review(
             self.prnumber,
