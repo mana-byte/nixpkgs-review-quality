@@ -33,11 +33,3 @@ def get_review_points_by_topic(
             topic_review_points = review_point_repo.get_review_points_by_topic(topic)
             return global_review_points + topic_review_points
     return review_point_repo.get_review_points_by_topic(topic)
-
-
-if __name__ == "__main__":
-    from src.github_module import get_pr_files
-
-    files, patches = get_pr_files(prnumber=491498)
-    keys = list(files.keys())
-    res = get_topic_by_builder_pattern(files[keys[0]])

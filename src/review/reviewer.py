@@ -3,7 +3,7 @@ from typing import Any, final
 from src.agents import AGENTS
 from src.review.services.agent import AgentService
 from src.review_points.models.review_point import ReviewPoint
-from src.github_module import get_pr_files
+from src.review.services.github import GitHubService
 from src.review.services.example import get_raw_examples_by_review_point
 from src.review.services.review_point import get_review_point_instructions_by_name
 from src.review.services.topic import (
@@ -32,19 +32,15 @@ class Reviewer:
 
     def __init__(
         self,
-        prnumber: int,
         harshness: int = 5,
-        owner: str = "NixOS",
-        repo: str = "nixpkgs",
     ):
-        self.prnumber = prnumber
+        self.prnumber: int = 0
         self.harshness = harshness
-        self.files, self.patches = get_pr_files(
-            prnumber=prnumber, owner=owner, repo=repo
-        )
-        self.topics_by_file = self.__generate_topics(self.files)
-        self.review_points_by_file = self.__generate_review_points(self.topics_by_file)
-        self.review_inputs = self.__generate_final_input(self.review_points_by_file)
+        self.files = {}
+        self.patches = {}
+        self.topics_by_file = {}
+        self.review_points_by_file = {}
+        self.review_inputs = {}
         self.reviews: dict[str, list[dict[str, str | int]]] = {}
 
     def __generate_topics(
@@ -94,7 +90,24 @@ class Reviewer:
             for file_name, review_points in review_points_by_file.items()
         }
 
-    def review(self, agent: AGENTS, model: str):
+    def checkout_pr(
+        self,
+        prnumber: int,
+        owner: str = "NixOS",
+        repo: str = "nixpkgs",
+        env_var_name: str = "GITHUB_ACCESS_TOKEN",
+    ):
+        github_service = GitHubService(env_var_name=env_var_name)
+        self.files, self.patches = github_service.get_pr_files(
+            prnumber=prnumber, owner=owner, repo=repo
+        )
+        self.topics_by_file = self.__generate_topics(self.files)
+        self.review_points_by_file = self.__generate_review_points(self.topics_by_file)
+        self.review_inputs = self.__generate_final_input(self.review_points_by_file)
+
+    def review_files(self, agent: AGENTS, model: str):
+        if not self.review_inputs or self.review_inputs == {}:
+            raise ValueError("No files to review.")
         agent_service = AgentService(agent, model)
         for file_name, review_input in self.review_inputs.items():
             print(f"Reviewing file: {file_name}")
@@ -104,6 +117,7 @@ class Reviewer:
 
 
 if __name__ == "__main__":
+    reviewer = Reviewer()
     # fetch pr from personal fork
-    reviewer = Reviewer(prnumber=1, owner="mana-byte")
-    reviewer.review(AGENTS.MISTRAL, "devstral-latest")
+    reviewer.checkout_pr(prnumber=1, owner="mana-byte")
+    reviewer.review_files(AGENTS.MISTRAL, "devstral-latest")
