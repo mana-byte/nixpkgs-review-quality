@@ -1,5 +1,6 @@
 from contextlib import contextmanager
-from typing import final
+from enum import Enum
+from typing import Any, final
 from github import Github
 from github import Auth
 import os
@@ -9,6 +10,12 @@ BLACK_LISTED_FILES = {
     "maintainers/maintainer-list.nix",
     "pkgs/by-name/hy/hyprland/info.json",
 }
+
+
+class REVIEW_TYPE(str, Enum):
+    COMMENT = "COMMENT"
+    APPROVE = "APPROVE"
+    REQUEST_CHANGES = "REQUEST_CHANGES"
 
 
 @final
@@ -26,6 +33,32 @@ class GitHubService:
         auth = Auth.Token(GITHUB_ACCESS_TOKEN)
         with Github(auth=auth) as g:
             yield g
+
+    def __create_suggestions_from_map(
+        self, suggestion_map: dict[str, Any]
+    ) -> list[dict[str, str]]:
+        comments: list[dict[str, str]] = []
+
+        for file_path, changes in suggestion_map.items():
+            for change in changes:
+                # Construct the comment body using GitHub's suggestion syntax
+                body = (
+                    f"{change['explanation']}\n\n"
+                    f"```suggestion\n"
+                    f"{change['after']}\n"
+                    f"```"
+                )
+
+                comments.append(
+                    {
+                        "path": file_path,
+                        "line": change["line_number"],
+                        "side": "RIGHT",  # Referring to the new code in the PR
+                        "body": body,
+                    }
+                )
+
+        return comments
 
     def get_pr_files(
         self, prnumber: int, owner="NixOS", repo="nixpkgs"
@@ -60,3 +93,20 @@ class GitHubService:
                 except Exception as e:
                     print(f"Error fetching content for {file.filename}: {e}")
         return files_content, files_patches
+
+    def submit_review(
+        self,
+        prnumber: int,
+        review_body: str,
+        reviews: dict[str, Any],
+        owner: str = "NixOS",
+        repo: str = "nixpkgs",
+        review_type: REVIEW_TYPE = REVIEW_TYPE.COMMENT,
+    ):
+        with self.__get_github_client() as g:
+            repository = g.get_repo(f"{owner}/{repo}")
+            pr = repository.get_pull(prnumber)
+            review_comments = self.__create_suggestions_from_map(reviews)
+            _ = pr.create_review(
+                body=review_body, event=review_type.value, comments=review_comments
+            )

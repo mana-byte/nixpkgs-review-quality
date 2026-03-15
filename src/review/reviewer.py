@@ -35,6 +35,8 @@ class Reviewer:
         harshness: int = 5,
     ):
         self.prnumber: int = 0
+        self.owner: str = ""
+        self.repo: str = ""
         self.harshness = harshness
         self.files = {}
         self.patches = {}
@@ -97,10 +99,18 @@ class Reviewer:
         repo: str = "nixpkgs",
         env_var_name: str = "GITHUB_ACCESS_TOKEN",
     ):
+        # Set PR information of the reviewer
+        self.prnumber = prnumber
+        self.owner = owner
+        self.repo = repo
+
+        # Fetch PR files and patches
         github_service = GitHubService(env_var_name=env_var_name)
         self.files, self.patches = github_service.get_pr_files(
             prnumber=prnumber, owner=owner, repo=repo
         )
+
+        # Generate topics, review points and final input for the review process
         self.topics_by_file = self.__generate_topics(self.files)
         self.review_points_by_file = self.__generate_review_points(self.topics_by_file)
         self.review_inputs = self.__generate_final_input(self.review_points_by_file)
@@ -113,7 +123,25 @@ class Reviewer:
             print(f"Reviewing file: {file_name}")
             rep = agent_service.ask_agent_for_review(review_input)
             self.reviews[file_name] = rep["changes"]
-        print(self.reviews)
+
+    def submit_reviews(
+        self,
+        review_message: str = "",
+    ):
+        if not self.reviews or self.reviews == {}:
+            raise ValueError("No reviews to submit.")
+        if review_message == "":
+            with open("src/review/messages/default_review_message.md", "r") as f:
+                review_message = f.read()
+
+        github_service = GitHubService()
+        github_service.submit_review(
+            self.prnumber,
+            review_message,
+            reviews=self.reviews,
+            owner=self.owner,
+            repo=self.repo,
+        )
 
 
 if __name__ == "__main__":
@@ -121,3 +149,4 @@ if __name__ == "__main__":
     # fetch pr from personal fork
     reviewer.checkout_pr(prnumber=1, owner="mana-byte")
     reviewer.review_files(AGENTS.MISTRAL, "devstral-latest")
+    reviewer.submit_reviews()
