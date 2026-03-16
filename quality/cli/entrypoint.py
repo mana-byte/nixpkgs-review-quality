@@ -23,6 +23,13 @@ def create_parser() -> argparse.ArgumentParser:
         type=int,
         help="The number of the pull request to review (required).",
     )
+
+    _ = review_parser.add_argument(
+        "--post-review",
+        action="store_true",
+        help="Whether to post the review on GitHub after generating it (default: False). If not set, the review will only be printed to the console.",
+    )
+
     _ = review_parser.add_argument(
         "--agent",
         type=AGENTS,
@@ -70,7 +77,7 @@ def main() -> None:
     parser = create_parser()
     args = parser.parse_args()
 
-    if args.command == "review":
+    if args.command == "pr":
         handle_reviewer(args)
 
 

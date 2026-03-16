@@ -48,8 +48,14 @@ class GitHubService:
             - files_patches: A dictionary mapping file names to their patch (diff) in the PR
         """
         with self.__get_github_client() as g:
-            repo = g.get_repo(f"{owner}/{repo}")
-            pr = repo.get_pull(prnumber)
+            try:
+                repo = g.get_repo(f"{owner}/{repo}")
+            except Exception as e:
+                raise ValueError(f"Error fetching repository {owner}/{repo}: {e}")
+            try:
+                pr = repo.get_pull(prnumber)
+            except Exception as e:
+                raise ValueError(f"Error fetching PR #{prnumber}: {e}")
             files = pr.get_files()
             files_content, files_patches = {}, {}
             for file in files:

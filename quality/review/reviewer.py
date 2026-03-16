@@ -135,11 +135,12 @@ class Reviewer:
     ):
         if not self.reviews or self.reviews == {}:
             raise ValueError("No reviews to submit.")
+
         if review_message == "":
             with open("quality/review/messages/default_review_message.md", "r") as f:
                 review_message = f.read()
             if additional_review_message != "":
-                review_message += "\n --- \n" + additional_review_message
+                review_message =  additional_review_message + "\n --- \n" + review_message
 
         print(f"Submitting review of PR {self.owner}/{self.repo}#{self.prnumber}")
         github_service = GitHubService()

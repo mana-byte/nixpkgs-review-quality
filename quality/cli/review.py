@@ -15,3 +15,8 @@ def handle_reviewer(args):
         repo=repo,
     )
     reviewer.review_files(agent=args.agent, model=args.model)
+
+    if args.post_review:
+        reviewer.submit_reviews(
+            additional_review_message=args.message, review_type=args.review_type
+        )
