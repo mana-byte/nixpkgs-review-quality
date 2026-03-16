@@ -2,7 +2,7 @@ from quality.review.reviewer import Reviewer
 
 
 def handle_reviewer(args):
-    if args.pr is None:
+    if args.pr_number is None:
         raise ValueError("PR number is required.")
 
     owner = args.repo.split("/")[0]
@@ -10,7 +10,7 @@ def handle_reviewer(args):
 
     reviewer = Reviewer(args.harshness)
     reviewer.checkout_pr(
-        prnumber=args.pr,
+        prnumber=args.pr_number,
         owner=owner,
         repo=repo,
     )

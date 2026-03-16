@@ -5,68 +5,74 @@ from quality.cli.review import handle_reviewer
 from quality.review.services.github import REVIEW_TYPE
 
 
-def parse_arguments() -> argparse.Namespace:
+def create_parser() -> argparse.ArgumentParser:
+    """Create and configure the argument parser."""
     parser = argparse.ArgumentParser(
         description="Tool for reviewing nixpkgs PRs using LLMs and prompt engineering."
     )
 
-    _ = parser.add_argument(
-        "--pr",
-        type=int,
-        help="The number of the pull request to review.",
+    subparsers = parser.add_subparsers(
+        dest="command", required=True, help="Available commands"
     )
 
-    _ = parser.add_argument(
+    review_parser: argparse.ArgumentParser = subparsers.add_parser(
+        "pr", help="Review a pull request"
+    )
+    _ = review_parser.add_argument(
+        "pr_number",
+        type=int,
+        help="The number of the pull request to review (required).",
+    )
+    _ = review_parser.add_argument(
         "--agent",
         type=AGENTS,
         choices=list(AGENTS),
-        default=AGENTS.MISTRAL.value,
-        help=f"The agent to use for the review. Possible values are: {[agent.value for agent in AGENTS]}.",
+        default=AGENTS.MISTRAL,
+        help=f"The agent to use for the review. Possible values: {[agent.value for agent in AGENTS]}.",
     )
-
-    _ = parser.add_argument(
+    _ = review_parser.add_argument(
         "--model",
         type=str,
         default="devstral-latest",
-        help="The model to use for the review. This is directly link to the agent chosen",
+        help="The model to use for the review (default: devstral-latest).",
     )
-
-    _ = parser.add_argument(
+    _ = review_parser.add_argument(
         "--harshness",
         type=int,
         choices=range(1, 6),
         default=5,
-        help="A parameter to adjust the strictness of the review (default: 5). This is directly link to review_point_importance, taking into account all review_point that have their importance < harshness.",
+        help="Review strictness (1-5, default: 5). Only review points with importance < harshness will be considered.",
     )
-
-    _ = parser.add_argument(
+    _ = review_parser.add_argument(
         "--repo",
         type=str,
         default="NixOS/nixpkgs",
-        help="format owner/repo, e.g. NixOS/nixpkgs (default: NixOS/nixpkgs)",
+        help="Repository in format owner/repo (default: NixOS/nixpkgs).",
     )
-
-    _ = parser.add_argument(
+    _ = review_parser.add_argument(
         "--review-type",
         type=REVIEW_TYPE,
-        default=REVIEW_TYPE.COMMENT,
         choices=list(REVIEW_TYPE),
-        help="The type of review to submit (default: COMMENT).",
+        default=REVIEW_TYPE.COMMENT,
+        help="Type of review to submit (default: COMMENT).",
     )
-
-    _ = parser.add_argument(
-        "--additional-review-message",
+    _ = review_parser.add_argument(
+        "--message",
         type=str,
         default="",
-        help="The additional message to include in the review body (default: '').",
+        help="Additional message to include in the review body.",
     )
-    return parser.parse_args()
+
+    return parser
 
 
 def main() -> None:
-    args = parse_arguments()
-    handle_reviewer(args)
+    parser = create_parser()
+    args = parser.parse_args()
+
+    if args.command == "review":
+        handle_reviewer(args)
+
 
 if __name__ == "__main__":
     main()
-

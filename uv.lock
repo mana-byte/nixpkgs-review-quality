@@ -443,7 +443,7 @@ wheels = [
 [[package]]
 name = "nixpkgs-review-quality"
 version = "0.1.0"
-source = { virtual = "." }
+source = { editable = "." }
 dependencies = [
     { name = "mistralai" },
     { name = "pygithub" },
