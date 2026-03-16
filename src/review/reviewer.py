@@ -4,7 +4,7 @@ from src.agents import AGENTS
 from src.review.services.agent import AgentService
 from src.review.utils import number_each_line
 from src.review_points.models.review_point import ReviewPoint
-from src.review.services.github import GitHubService
+from src.review.services.github import REVIEW_TYPE, GitHubService
 from src.review.services.example import get_raw_examples_by_review_point
 from src.review.services.review_point import get_review_point_instructions_by_name
 from src.review.services.topic import (
@@ -119,16 +119,19 @@ class Reviewer:
     def review_files(self, agent: AGENTS, model: str):
         if not self.review_inputs or self.review_inputs == {}:
             raise ValueError("No files to review.")
+
         agent_service = AgentService(agent, model)
         for file_name, review_input in self.review_inputs.items():
             print(f"Reviewing file: {file_name}")
             rep = agent_service.ask_agent_for_review(review_input)
             self.reviews[file_name] = rep["changes"]
+        print(self.reviews)
 
     def submit_reviews(
         self,
         review_message: str = "",
         additional_review_message: str = "",
+        review_type: REVIEW_TYPE = REVIEW_TYPE.COMMENT,
     ):
         if not self.reviews or self.reviews == {}:
             raise ValueError("No reviews to submit.")
@@ -138,7 +141,7 @@ class Reviewer:
             if additional_review_message != "":
                 review_message += "\n --- \n" + additional_review_message
 
-        print(f"Submitting review of PR #{self.prnumber}")
+        print(f"Submitting review of PR {self.owner}/{self.repo}#{self.prnumber}")
         github_service = GitHubService()
         github_service.submit_review(
             self.prnumber,
@@ -146,6 +149,7 @@ class Reviewer:
             reviews=self.reviews,
             owner=self.owner,
             repo=self.repo,
+            review_type=review_type,
         )
 
 

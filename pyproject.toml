@@ -1,5 +1,5 @@
 [project]
-name = "nixpkgs-review-py-code"
+name = "nixpkgs-review-quality"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
@@ -11,6 +11,9 @@ dependencies = [
     "sqlalchemy>=2.0.48",
     "sqlite-web>=0.7.1",
 ]
+
+[project.scripts]
+nixpkgs-review-quality = "src.cli.entrypoint:main"
 
 [tool.pytest.ini_options]
 pythonpath = ["."]

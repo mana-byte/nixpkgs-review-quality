@@ -1,4 +1,5 @@
 from contextlib import contextmanager
+from src.review.utils import create_suggestions_from_reviews
 from enum import Enum
 from typing import Any, final
 from github import Github, Auth
@@ -33,31 +34,6 @@ class GitHubService:
         with Github(auth=auth) as g:
             yield g
 
-    def __create_suggestions_from_map(
-        self, suggestion_map: dict[str, Any]
-    ) -> list[dict[str, str]]:
-        comments: list[dict[str, str]] = []
-
-        for file_path, changes in suggestion_map.items():
-            for change in changes:
-                # Construct the comment body using GitHub's suggestion syntax
-                body = (
-                    f"{change['explanation']}\n\n"
-                    f"```suggestion\n"
-                    f"{change['after']}\n"
-                    f"```"
-                )
-
-                comments.append(
-                    {
-                        "path": file_path,
-                        "line": change["line_number"],
-                        "side": "RIGHT",  # Referring to the new code in the PR
-                        "body": body,
-                    }
-                )
-
-        return comments
 
     def get_pr_files(
         self, prnumber: int, owner="NixOS", repo="nixpkgs"
@@ -102,10 +78,13 @@ class GitHubService:
         repo: str = "nixpkgs",
         review_type: REVIEW_TYPE = REVIEW_TYPE.COMMENT,
     ):
+        if reviews == {}:
+            print("No reviews to submit.")
+            return
         with self.__get_github_client() as g:
             repository = g.get_repo(f"{owner}/{repo}")
             pr = repository.get_pull(prnumber)
-            review_comments = self.__create_suggestions_from_map(reviews)
+            review_comments = create_suggestions_from_reviews(reviews)
             try:
                 _ = pr.create_review(
                     body=review_body, event=review_type.value, comments=review_comments

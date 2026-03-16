@@ -441,7 +441,7 @@ wheels = [
 ]
 
 [[package]]
-name = "nixpkgs-review-py-code"
+name = "nixpkgs-review-quality"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
