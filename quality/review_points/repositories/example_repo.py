@@ -1,13 +1,15 @@
+"""Repository for managing Example entities in the database."""
+
 from sqlalchemy import Column
 from sqlalchemy.orm import Session
 from quality.review_points.models.example import Example
 from typing import final
 
-from quality.review_points.models.review_point import ReviewPoint
-
 
 @final
 class ExampleRepo:
+    """Repository class for performing CRUD operations on Example entities. This class provides methods to create, read, update, and delete examples in the database."""
+
     def __init__(self, session: Session):
         self.session = session
 

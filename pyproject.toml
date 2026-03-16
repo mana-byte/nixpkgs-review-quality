@@ -23,6 +23,7 @@ nixpkgs-review-quality = "quality.cli.entrypoint:main"
 [dependency-groups]
 dev = [
     "pytest>=9.0.2",
+    "pylint>=4.0.5",
     "sqlite-web>=0.7.1",
 ]
 

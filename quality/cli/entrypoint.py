@@ -11,10 +11,19 @@ def create_parser() -> argparse.ArgumentParser:
         description="Tool for reviewing nixpkgs PRs using LLMs and prompt engineering."
     )
 
+    _ = parser.add_argument(
+        "--version",
+        "-v",
+        action="version",
+        version="%(prog)s 1.0",
+        help="Show program version",
+    )
+
     subparsers = parser.add_subparsers(
         dest="command", required=True, help="Available commands"
     )
 
+    # sub command pr
     review_parser: argparse.ArgumentParser = subparsers.add_parser(
         "pr", help="Review a pull request"
     )
@@ -32,6 +41,7 @@ def create_parser() -> argparse.ArgumentParser:
 
     _ = review_parser.add_argument(
         "--agent",
+        "-a",
         type=AGENTS,
         choices=list(AGENTS),
         default=AGENTS.MISTRAL,
@@ -39,6 +49,7 @@ def create_parser() -> argparse.ArgumentParser:
     )
     _ = review_parser.add_argument(
         "--model",
+        "-m",
         type=str,
         default="devstral-latest",
         help="The model to use for the review (default: devstral-latest).",
@@ -52,6 +63,7 @@ def create_parser() -> argparse.ArgumentParser:
     )
     _ = review_parser.add_argument(
         "--repo",
+        "-r",
         type=str,
         default="NixOS/nixpkgs",
         help="Repository in format owner/repo (default: NixOS/nixpkgs).",

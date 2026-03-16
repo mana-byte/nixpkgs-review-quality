@@ -1,3 +1,5 @@
+"""Repository for ReviewPoint model."""
+
 from sqlalchemy import Column
 from sqlalchemy.orm import Session
 from quality.review_points.models.review_point import ReviewPoint
@@ -7,6 +9,8 @@ from typing import final
 
 @final
 class ReviewPointRepo:
+    """Repository class for performing CRUD operations on ReviewPoint entities. This class provides methods to create, read, update, and delete review points in the database."""
+
     def __init__(self, session: Session):
         self.session = session
 
@@ -31,7 +35,9 @@ class ReviewPointRepo:
         self.session.add(new_review_point)
         return new_review_point
 
-    def get_review_point_by_name(self, review_point_name: str | Column[str]) -> ReviewPoint:
+    def get_review_point_by_name(
+        self, review_point_name: str | Column[str]
+    ) -> ReviewPoint:
         return (
             self.session.query(ReviewPoint)
             .filter(ReviewPoint.review_point_name == review_point_name)

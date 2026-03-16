@@ -1,10 +1,14 @@
-from typing import override
+"""This module provides a unified interface for interacting with various AI agents. It defines an enumeration of supported agents and a method to retrieve the corresponding client class for each agent. This allows users to easily switch between different AI agents without changing their codebase, as long as they adhere to the defined client interface."""
+
+from enum import Enum
+
 from quality.agents.clients.mistralai import MistralClient
 from quality.agents.clients.base_client import BaseClient
-from enum import Enum
 
 
 class AGENTS(str, Enum):
+    """Enumeration of supported AI agents. Each agent is represented as a string value. The get_client_class method can be used to retrieve the corresponding client class for each agent."""
+
     # IMPLEMENTED
     MISTRAL = "MISTRAL"
     # NOT IMPLEMENTED YET
@@ -13,6 +17,7 @@ class AGENTS(str, Enum):
 
     @classmethod
     def get_client_class(cls, agent: "AGENTS") -> type[BaseClient]:
+        """Returns the client class corresponding to the given agent. If the agent is not supported, raises a ValueError."""
         agent_to_client_mapping = {
             cls.MISTRAL: MistralClient,
         }

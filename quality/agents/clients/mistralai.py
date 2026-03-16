@@ -1,15 +1,18 @@
+"""Mistral AI client implementation to interact with mistralai api"""
+
 from contextlib import contextmanager
 from typing import Any, Iterator, override
 from mistralai import Mistral
-import json
 
 from quality.agents.clients.base_client import BaseClient
 
 
 class MistralClient(BaseClient):
+    """Mistral AI client class to interact with mistralai api"""
 
     @override
     def ask(self, system_prompt: str, user_prompt: str, model: str) -> str:
+        """Sends a prompt to the Mistral API and returns the response content as a string."""
         with self.get_client() as mistral_client:
             res = mistral_client.chat.complete(
                 model=model,

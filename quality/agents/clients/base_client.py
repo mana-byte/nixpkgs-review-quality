@@ -1,9 +1,12 @@
-from contextlib import contextmanager
+"""Base client for for interacting with language model APIs."""
+
 import os
+from contextlib import contextmanager
 from typing import Any, Iterator
 
 
 class BaseClient:
+    """Base client class for interacting with language model APIs. This class provides a common interface for different LLM clients, handling API key management and defining the structure for sending prompts and receiving responses."""
 
     def __init__(self, env_var_name: str):
         self.env_var_name: str = env_var_name
