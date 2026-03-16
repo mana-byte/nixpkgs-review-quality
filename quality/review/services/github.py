@@ -1,5 +1,5 @@
 from contextlib import contextmanager
-from src.review.utils import create_suggestions_from_reviews
+from quality.review.utils import create_suggestions_from_reviews
 from enum import Enum
 from typing import Any, final
 from github import Github, Auth

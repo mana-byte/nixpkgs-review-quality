@@ -3,7 +3,7 @@ from typing import Any, Iterator, override
 from mistralai import Mistral
 import json
 
-from src.agents.clients.base_client import BaseClient
+from quality.agents.clients.base_client import BaseClient
 
 
 class MistralClient(BaseClient):

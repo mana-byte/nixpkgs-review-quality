@@ -1,6 +1,6 @@
-from src.review.services.topic import get_topic_by_builder_pattern
-from src.review_points import REVIEW_POINTS_TOPIC
-from src.review.services.github import GitHubService
+from quality.review.services.topic import get_topic_by_builder_pattern
+from quality.review_points import REVIEW_POINTS_TOPIC
+from quality.review.services.github import GitHubService
 
 from contextlib import contextmanager
 

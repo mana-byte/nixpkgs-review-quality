@@ -1,4 +1,0 @@
-{
-  "description": "meta.description must:\nBe short, just one sentence.\nBe capitalized.\nNot start with the definite or an indefinite article.\nNot start with the package name.\nMore generally, it should not refer to the package name.\nNot end with a period (or any punctuation for that matter).\nProvide factual information.\nAvoid subjective language."
-}
-

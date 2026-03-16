@@ -1,4 +1,4 @@
-from src.review.reviewer import Reviewer
+from quality.review.reviewer import Reviewer
 
 
 def handle_reviewer(args):

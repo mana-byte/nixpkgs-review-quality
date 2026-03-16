@@ -1,7 +1,7 @@
 from sqlalchemy import Column
 from sqlalchemy.orm import Session
-from src.review_points.models.review_point import ReviewPoint
-from src.review_points import REVIEW_POINTS_TOPIC
+from quality.review_points.models.review_point import ReviewPoint
+from quality.review_points import REVIEW_POINTS_TOPIC
 from typing import final
 
 

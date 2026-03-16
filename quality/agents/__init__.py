@@ -1,6 +1,6 @@
 from typing import override
-from src.agents.clients.mistralai import MistralClient
-from src.agents.clients.base_client import BaseClient
+from quality.agents.clients.mistralai import MistralClient
+from quality.agents.clients.base_client import BaseClient
 from enum import Enum
 
 

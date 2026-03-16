@@ -7,13 +7,17 @@ requires-python = ">=3.13"
 dependencies = [
     "mistralai>=1.12.4",
     "pygithub>=2.8.1",
-    "pytest>=9.0.2",
     "sqlalchemy>=2.0.48",
-    "sqlite-web>=0.7.1",
 ]
 
 [project.scripts]
-nixpkgs-review-quality = "src.cli.entrypoint:main"
+nixpkgs-review-quality = "quality.cli.entrypoint:main"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0.2",
+    "sqlite-web>=0.7.1",
+]
 
 [tool.pytest.ini_options]
 pythonpath = ["."]

@@ -1,9 +1,9 @@
 from sqlalchemy import Column
 from sqlalchemy.orm import Session
-from src.review_points.models.example import Example
+from quality.review_points.models.example import Example
 from typing import final
 
-from src.review_points.models.review_point import ReviewPoint
+from quality.review_points.models.review_point import ReviewPoint
 
 
 @final

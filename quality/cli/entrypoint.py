@@ -1,8 +1,8 @@
 import argparse
 
-from src.agents import AGENTS
-from src.cli.review import handle_reviewer
-from src.review.services.github import REVIEW_TYPE
+from quality.agents import AGENTS
+from quality.cli.review import handle_reviewer
+from quality.review.services.github import REVIEW_TYPE
 
 
 def parse_arguments() -> argparse.Namespace:

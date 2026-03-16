@@ -1,6 +1,6 @@
 from sqlalchemy.orm import relationship, validates
 from sqlalchemy import CheckConstraint, Column, Enum, Integer, String
-from src.review_points import REVIEW_POINTS_TOPIC
+from quality.review_points import REVIEW_POINTS_TOPIC
 from .base import Base
 
 

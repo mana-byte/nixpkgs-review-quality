@@ -1,17 +1,17 @@
 from typing import Any, final
 
-from src.agents import AGENTS
-from src.review.services.agent import AgentService
-from src.review.utils import number_each_line
-from src.review_points.models.review_point import ReviewPoint
-from src.review.services.github import REVIEW_TYPE, GitHubService
-from src.review.services.example import get_raw_examples_by_review_point
-from src.review.services.review_point import get_review_point_instructions_by_name
-from src.review.services.topic import (
+from quality.agents import AGENTS
+from quality.review.services.agent import AgentService
+from quality.review.utils import number_each_line
+from quality.review_points.models.review_point import ReviewPoint
+from quality.review.services.github import REVIEW_TYPE, GitHubService
+from quality.review.services.example import get_raw_examples_by_review_point
+from quality.review.services.review_point import get_review_point_instructions_by_name
+from quality.review.services.topic import (
     get_review_points_by_topic,
     get_topic_by_builder_pattern,
 )
-from src.review_points import REVIEW_POINTS_TOPIC
+from quality.review_points import REVIEW_POINTS_TOPIC
 
 
 @final
@@ -136,7 +136,7 @@ class Reviewer:
         if not self.reviews or self.reviews == {}:
             raise ValueError("No reviews to submit.")
         if review_message == "":
-            with open("src/review/messages/default_review_message.md", "r") as f:
+            with open("quality/review/messages/default_review_message.md", "r") as f:
                 review_message = f.read()
             if additional_review_message != "":
                 review_message += "\n --- \n" + additional_review_message
