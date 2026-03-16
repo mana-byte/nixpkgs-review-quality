@@ -4,6 +4,10 @@ from sqlalchemy.orm import relationship, validates
 from sqlalchemy import CheckConstraint, Column, Enum, Integer, String
 from quality.review_points import REVIEW_POINTS_TOPIC
 from .base import Base
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from quality.review_points.models.example import Example
 
 
 class ReviewPoint(Base):

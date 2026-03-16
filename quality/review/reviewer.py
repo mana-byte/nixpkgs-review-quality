@@ -161,3 +161,8 @@ class Reviewer:
             review_type=review_type,
         )
         print("Review submitted successfully.")
+
+if __name__ == "__main__":
+    reviewer = Reviewer(harshness=5)
+    reviewer.checkout_pr(prnumber=474854)
+    print(reviewer.review_inputs)

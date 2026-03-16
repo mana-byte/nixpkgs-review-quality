@@ -40,18 +40,51 @@ def test_get_example_by_name():
         assert test.review_point_id == 1
 
 
+def test_get_example_by_id_is_none():
+    with get_repo() as repo:
+        test = repo.get_example_by_id(420690)
+        assert test is None
+
+
+def test_get_example_by_name_is_none():
+    with get_repo() as repo:
+        test = repo.get_example_by_name("SUPER DUPER NONE EXISTANT EXAMPLE NAME")
+        assert test is None
+
+
 def test_update_example():
     with get_repo() as repo:
         example_update = Example(
             example_name="Example 1", example="Example 2", review_point_id=1
         )
-        repo.update_example(ID, example_update)
+        _ = repo.update_example(ID, example_update)
         test = repo.get_example_by_id(ID)
         assert test.example == "Example 2"
 
 
+def test_update_example_is_none():
+    with get_repo() as repo:
+        false_id = 420690
+        example_update = Example(
+            example_name="Example 1", example="Example 2", review_point_id=1
+        )
+        _ = repo.update_example(false_id, example_update)
+        test = repo.get_example_by_id(ID)
+        assert test.example == "Example 2"
+        false_example = repo.get_example_by_id(false_id)
+        assert false_example is None
+
+
 def test_delete_example():
     with get_repo() as repo:
-        repo.delete_example(ID)
+        _ = repo.delete_example(ID)
         test = repo.get_example_by_id(ID)
+        assert test is None
+
+
+def test_delete_example_is_none():
+    with get_repo() as repo:
+        false_id = 420690
+        _ = repo.delete_example(false_id)
+        test = repo.get_example_by_id(false_id)
         assert test is None
