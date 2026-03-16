@@ -1,4 +1,4 @@
-name: Test project using Pytest but disable tests using agents
+name: Pytest lite
 
 on:
   push:

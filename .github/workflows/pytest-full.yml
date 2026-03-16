@@ -1,4 +1,4 @@
-name: Test project using Pytest
+name: Pytest full
 
 on:
   workflow_dispatch:

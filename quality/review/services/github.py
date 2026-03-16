@@ -27,7 +27,7 @@ class GitHubService:
     @contextmanager
     def __get_github_client(self):
         """Context manager to get a GitHub client using an access token from environment variables."""
-        GITHUB_ACCESS_TOKEN = os.getenv(self.env_var_name)
+        GITHUB_ACCESS_TOKEN = os.environ.get(self.env_var_name)
         if not GITHUB_ACCESS_TOKEN:
             raise ValueError(self.env_var_name + " environment variable is not set")
         auth = Auth.Token(GITHUB_ACCESS_TOKEN)
