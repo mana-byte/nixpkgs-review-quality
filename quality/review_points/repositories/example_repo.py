@@ -13,11 +13,6 @@ class ExampleRepo:
     def __init__(self, session: Session):
         self.session = session
 
-    def create_example(self, example: str, review_point_id: int) -> Example:
-        new_example = Example(example=example, review_point_id=review_point_id)
-        self.session.add(new_example)
-        return new_example
-
     def create_example_with_object(self, new_example: Example) -> Example:
         self.session.add(new_example)
         return new_example
@@ -41,11 +36,16 @@ class ExampleRepo:
             .all()
         )
 
-    def update_example(self, example_id: int, new_example: str):
+    def update_example(self, example_id: int, new_example: Example):
+        matching_hash = {
+            "example_name": new_example.example_name,
+            "example": new_example.example,
+            "review_point_id": new_example.review_point_id,
+        }
         return (
             self.session.query(Example)
             .filter(Example.id == example_id)
-            .update({"example": new_example})
+            .update(matching_hash)
         )
 
     def delete_example(self, example_id: int):
