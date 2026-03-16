@@ -1,8 +1,9 @@
 from quality.review.services.example import get_raw_examples_by_review_point
-from quality.review_points.models.review_point import ReviewPoint
+from quality.review_points.models import ReviewPoint, Example
 from quality.review_points.repositories.review_point_repo import ReviewPointRepo
 from quality.review_points.database.session import get_db
 import ast
+
 
 def test_get_raw_examples_by_review_point():
     with get_db() as db:
@@ -14,7 +15,8 @@ def test_get_raw_examples_by_review_point():
         assert type(test_dict["before"]) == str
         assert type(test_dict["after"]) == str
         assert type(test_dict["explanation"]) == str
-        
+
+
 def test_get_raw_examples_by_review_point_is_none():
     false_review_point = ReviewPoint(
         id=69420,
@@ -23,4 +25,3 @@ def test_get_raw_examples_by_review_point_is_none():
     )
     examples = get_raw_examples_by_review_point(false_review_point)
     assert examples == []
-        
