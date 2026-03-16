@@ -17,8 +17,8 @@ jobs:
           pip install uv
       - name: Test with pytest
         env:
-          GITHUB_ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+          ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
           MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}
           DB_URL: ${{ secrets.DB_URL }}
         run: |
-          uv run pytest tests/
+          uv run --dev pytest tests/ -v

@@ -21,7 +21,7 @@ jobs:
           pip install uv
       - name: Test with pytest
         env:
-          GITHUB_ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+          ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
           DB_URL: ${{ secrets.DB_URL }}
         run: |
-          uv run pytest tests/ --ignore=tests/test_review_reviewer.py --ignore=tests/test_review_service_agent.py
+          uv run --dev pytest tests/ --ignore=tests/test_review_reviewer.py --ignore=tests/test_review_service_agent.py -v

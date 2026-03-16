@@ -102,7 +102,7 @@ class Reviewer:
         prnumber: int,
         owner: str = "NixOS",
         repo: str = "nixpkgs",
-        env_var_name: str = "GITHUB_ACCESS_TOKEN",
+        env_var_name: str = "ACCESS_TOKEN",
     ) -> None:
         """Fetches the PR files and patches, generates the topics, review points and final input for the review process."""
         # Set PR information of the reviewer

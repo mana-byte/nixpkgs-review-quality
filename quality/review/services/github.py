@@ -21,7 +21,7 @@ class REVIEW_TYPE(str, Enum):
 @final
 class GitHubService:
 
-    def __init__(self, env_var_name: str = "GITHUB_ACCESS_TOKEN"):
+    def __init__(self, env_var_name: str = "ACCESS_TOKEN"):
         self.env_var_name = env_var_name
 
     @contextmanager
