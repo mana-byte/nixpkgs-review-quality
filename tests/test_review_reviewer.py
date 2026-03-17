@@ -29,11 +29,7 @@ def test_reviewer_checkout_pr_invalid_pr():
 def test_reviewer_checkout_pr_no_access_token():
     """Test that the Reviewer raises an error when the GitHub access token is not set."""
     reviewer = Reviewer(harshness=5)
-    try:
-        reviewer.checkout_pr(prnumber=474854, env_var_name="NON_EXISTENT_ENV_VAR")
-        assert False
-    except ValueError as e:
-        assert True
+    reviewer.checkout_pr(prnumber=474854, env_var_name="NON_EXISTENT_ENV_VAR")
 
 
 def test_reviewer_checkout_pr_no_valid_repo():

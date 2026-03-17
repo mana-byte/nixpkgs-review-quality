@@ -59,8 +59,8 @@ class GitHubService:
             - files_content: A dictionary mapping file names to their content at the head of the PR
             - files_patches: A dictionary mapping file names to their patch (diff) in the PR
         """
-        with self.__get_github_client() as g:
-            try:
+        try:
+            with self.__get_github_client() as g:
                 repository, pr = self.__get_pr(
                     g, prnumber=prnumber, owner=owner, repo=repo
                 )
@@ -78,15 +78,15 @@ class GitHubService:
                     if file_content:
                         files_content[file.filename] = file_content
                         files_patches[file.filename] = patch
-            except ValueError as e:
-                print(f"Error fetching PR: {e}")
-                return {}, {}
-            except GithubException as e:
-                print(f"GitHub API error fetching PR files: {e}")
-                return {}, {}
-            except Exception as e:
-                print(f"Unexpected error fetching PR files: {e}")
-                return {}, {}
+        except ValueError as e:
+            print(f"Error fetching PR: {e}")
+            return {}, {}
+        except GithubException as e:
+            print(f"GitHub API error fetching PR files: {e}")
+            return {}, {}
+        except Exception as e:
+            print(f"Unexpected error fetching PR files: {e}")
+            return {}, {}
         return files_content, files_patches
 
     def submit_review(
@@ -101,16 +101,16 @@ class GitHubService:
         if reviews == {}:
             print("No reviews to submit.")
             return
-        with self.__get_github_client() as g:
-            try:
+        try:
+            with self.__get_github_client() as g:
                 _, pr = self.__get_pr(g, prnumber=prnumber, owner=owner, repo=repo)
                 review_comments = create_suggestions_from_reviews(reviews)
                 _ = pr.create_review(
                     body=review_body, event=review_type.value, comments=review_comments
                 )
-            except ValueError as e:
-                print(f"Error fetching PR: {e}")
-            except GithubException as e:
-                print(f"GitHub API error fetching PR files: {e}")
-            except Exception as e:
-                print(f"Error submitting review: {e}")
+        except ValueError as e:
+            print(f"Error fetching PR: {e}")
+        except GithubException as e:
+            print(f"GitHub API error fetching PR files: {e}")
+        except Exception as e:
+            print(f"Error submitting review: {e}")

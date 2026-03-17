@@ -14,7 +14,13 @@ def handle_reviewer(args):
         owner=owner,
         repo=repo,
     )
+    if not reviewer.files or reviewer.files == {}:
+        return
+
     reviewer.review_files(agent=args.agent, model=args.model)
+
+    if not reviewer.reviews or reviewer.reviews == {}:
+        return
 
     if args.post_review:
         reviewer.submit_reviews(
