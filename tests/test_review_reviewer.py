@@ -1,6 +1,7 @@
 from quality.agents import AGENTS
 from quality.review.reviewer import Reviewer
 from mistralai.models.sdkerror import SDKError
+import tempfile
 
 
 def test_reviewer_checkout_pr():
@@ -90,3 +91,39 @@ def test_reviewer_review_files_and_submit_reviews():
         reviewer.submit_reviews(additional_review_message="Test review message")
     except ValueError as e:
         assert False, f"Unexpected error when submitting reviews: {str(e)}"
+
+
+def test_save_reviews_success():
+    with tempfile.TemporaryDirectory() as temp_dir:
+        reviewer = Reviewer(harshness=5)
+        reviewer.checkout_pr(prnumber=1, owner="mana-byte", repo="nixpkgs")
+        reviewer.review_files(agent=AGENTS.MISTRAL, model="devstral-latest")
+        try:
+            assert reviewer.save_reviews(temp_dir + "/test_reviews.json")
+        except Exception as e:
+            assert False, f"Unexpected error when saving reviews: {str(e)}"
+
+
+def test_save_reviews_success_directory():
+    with tempfile.TemporaryDirectory() as temp_dir:
+        reviewer = Reviewer(harshness=5)
+        reviewer.checkout_pr(prnumber=1, owner="mana-byte", repo="nixpkgs")
+        reviewer.review_files(agent=AGENTS.MISTRAL, model="devstral-latest")
+        try:
+            assert reviewer.save_reviews(temp_dir)
+        except Exception as e:
+            assert False, f"Unexpected error when saving reviews: {str(e)}"
+
+
+def test_save_reviews_fail():
+    with tempfile.TemporaryDirectory() as temp_dir:
+        reviewer = Reviewer(harshness=5)
+        reviewer.checkout_pr(prnumber=1, owner="mana-byte", repo="nixpkgs")
+        reviewer.review_files(agent=AGENTS.MISTRAL, model="devstral-latest")
+        try:
+            assert (
+                reviewer.save_reviews("/invalid/path/ceiozcjziejcize/reviews.json")
+                == False
+            )
+        except Exception as e:
+            assert False, f"Unexpected error when saving reviews: {str(e)}"
