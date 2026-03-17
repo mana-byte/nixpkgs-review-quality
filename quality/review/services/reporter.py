@@ -1,3 +1,6 @@
+from _pytest.stash import T
+
+
 class ReporterService:
     """Write a human readable report for reviews in a .md file"""
 
@@ -42,3 +45,4 @@ class ReporterService:
         except Exception as e:
             print(f"Error saving report to {file_path}: {e}")
             return False
+        return True

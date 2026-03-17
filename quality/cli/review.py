@@ -24,4 +24,4 @@ def handle_reviewer(args):
         reviewer.print_reviews()
 
     if args.save_report:
-        reviewer.save_reviews(args.save_report)
+        _ = reviewer.save_reviews(args.save_report)
