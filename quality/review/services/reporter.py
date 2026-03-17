@@ -1,6 +1,3 @@
-from _pytest.stash import T
-
-
 class ReporterService:
     """Write a human readable report for reviews in a .md file"""
 
