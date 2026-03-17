@@ -2,7 +2,7 @@
 
 from enum import Enum
 
-from quality.agents.clients.mistralai import MistralClient
+from quality.agents.clients import MistralClient, OpenAIClient
 from quality.agents.clients.base_client import BaseClient
 
 
@@ -11,8 +11,8 @@ class AGENTS(str, Enum):
 
     # IMPLEMENTED
     MISTRAL = "MISTRAL"
-    # NOT IMPLEMENTED YET
     OPEN_AI = "OPEN_AI"
+    # NOT IMPLEMENTED YET
     CLAUDE = "CLAUDE"
 
     @classmethod
@@ -20,6 +20,7 @@ class AGENTS(str, Enum):
         """Returns the client class corresponding to the given agent. If the agent is not supported, raises a ValueError."""
         agent_to_client_mapping = {
             cls.MISTRAL: MistralClient,
+            cls.OPEN_AI: OpenAIClient,
         }
         client_class = agent_to_client_mapping.get(agent)
         if client_class is None:
