@@ -15,7 +15,7 @@ def create_parser() -> argparse.ArgumentParser:
         "--version",
         "-v",
         action="version",
-        version="%(prog)s 1.0",
+        version="%(prog)s 0.3",
         help="Show program version",
     )
 
