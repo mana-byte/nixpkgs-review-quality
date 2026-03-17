@@ -1,7 +1,10 @@
+import pytest
 from quality.review.services.topic import (
     get_topic_by_builder_pattern,
     get_review_points_by_topic,
 )
+from quality.review_points import REVIEW_POINTS_TOPIC
+from tests.test_repo_review_points import review_point
 
 
 PYTHON_TEST_FILE = """
@@ -205,3 +208,152 @@ def test_get_review_points_by_topic_no_global():
     review_points = get_review_points_by_topic(topic, withGlobal=False)
     assert isinstance(review_points, list)
     assert all(rp.topic == topic for rp in review_points)
+
+
+def test_get_topic_by_builder_pattern_empty_file():
+    """Test that get_topic_by_builder_pattern handles empty file content."""
+    topic = get_topic_by_builder_pattern("")
+    assert topic is None
+
+
+def test_get_topic_by_builder_pattern_whitespace_only():
+    """Test that get_topic_by_builder_pattern handles whitespace-only content."""
+    topic = get_topic_by_builder_pattern("   \n\t\r  ")
+    assert topic is None
+
+
+def test_get_topic_by_builder_pattern_unsupported_builder():
+    """Test that get_topic_by_builder_pattern handles unsupported builder patterns."""
+    unsupported_file = """
+    {
+      lib,
+      stdenv,
+    }:
+    
+    stdenv.mkDerivation {
+      name = "unsupported";
+      version = "1.0.0";
+      src = ./.;
+      meta = {
+        description = "Unsupported builder pattern";
+      };
+    }
+    """
+    topic = get_topic_by_builder_pattern(unsupported_file)
+    assert topic is None
+
+
+def test_get_topic_by_builder_pattern_multiple_builders():
+    """Test that get_topic_by_builder_pattern handles files with multiple builder patterns."""
+    multi_builder_file = """
+    {
+      lib,
+      python3Packages,
+      rustPlatform,
+    }:
+    
+    python3Packages.buildPythonApplication (finalAttrs: {
+      pname = "python-app";
+      version = "1.0.0";
+    })
+    
+    rustPlatform.buildRustPackage (finalAttrs: {
+      pname = "rust-lib";
+      version = "1.0.0";
+    })
+    """
+    # Should return the first matching topic (PYTHON)
+    topic = get_topic_by_builder_pattern(multi_builder_file)
+    assert topic is not None
+    assert topic.name == "PYTHON"
+
+
+def test_get_topic_by_builder_pattern_nested_expressions():
+    """Test that get_topic_by_builder_pattern handles nested expressions."""
+    nested_file = """
+    {
+      lib,
+      python3Packages,
+    }:
+    
+    let
+      buildPythonApp = python3Packages.buildPythonApplication;
+    in {
+      myApp = buildPythonApp (finalAttrs: {
+        pname = "nested-app";
+        version = "1.0.0";
+      });
+    }
+    """
+    topic = get_topic_by_builder_pattern(nested_file)
+    assert topic is not None
+    assert topic.name == "PYTHON"
+
+
+def test_get_topic_by_builder_pattern_with_comments():
+    """Test that get_topic_by_builder_pattern handles files with comments."""
+    commented_file = """
+    {
+      lib,
+      # This is a comment
+      python3Packages, /* multi-line
+                                     comment */
+      # buildPythonApplication
+    }:
+    
+    python3Packages.buildPythonApplication (finalAttrs: {
+      pname = "commented-app";
+      version = "1.0.0";
+    })
+    """
+    topic = get_topic_by_builder_pattern(commented_file)
+    assert topic is not None
+    assert topic.name == "PYTHON"
+
+
+def test_get_topic_by_builder_pattern_case_sensitivity():
+    """Test that get_topic_by_builder_pattern is case-sensitive."""
+    case_file = """
+    {
+      lib,
+      Python3Packages,
+    }:
+    
+    Python3Packages.BuildPythonapPlicatIon (finalAttrs: {
+      pname = "case-app";
+      version = "1.0.0";
+    })
+    """
+    topic = get_topic_by_builder_pattern(case_file)
+    assert topic is None
+
+
+def test_get_review_points_by_topic_invalid_topic():
+    """Test that get_review_points_by_topic handles invalid topic."""
+    # Create a mock topic that doesn't exist
+    class MockTopic:
+        def __init__(self):
+            self.name = "NONEXISTENT"
+    
+    mock_topic = MockTopic()
+    review_points = get_review_points_by_topic(mock_topic, withGlobal=False)
+    # Should return empty list for non-existent topic
+    assert isinstance(review_points, list)
+    assert len(review_points) == 0
+
+
+def test_get_review_points_by_topic_with_global_false():
+    """Test that get_review_points_by_topic with withGlobal=False excludes global points."""
+    topic = get_topic_by_builder_pattern(PYTHON_TEST_FILE)
+    if topic is None:
+        assert False, "Topic should not be None for the test file"
+    
+    review_points_with_global = get_review_points_by_topic(topic, withGlobal=True)
+    review_points_without_global = get_review_points_by_topic(topic, withGlobal=False)
+    
+    # Should have fewer or equal points when excluding global
+    assert len(review_points_without_global) <= len(review_points_with_global)
+    # All points without global should be in the with global list
+    review_points_with_global_id = {point.id for point in review_points_with_global}
+    for point in review_points_without_global:
+        assert point.id in review_points_with_global_id

@@ -1,7 +1,10 @@
 """test require network, agent api key"""
 
+import pytest
+from unittest.mock import patch, MagicMock
 from quality.agents import AGENTS
 from quality.review.services.agent import AgentService
+from mistralai.models.sdkerror import SDKError
 
 EXAMPLE_REVIEW_INPUT_1 = {
     "pkgs/development/python-modules/pr_test/package.nix": {
@@ -112,3 +115,116 @@ def test_agent_service_rep_format_2():
     assert type(rep["changes"][0]["before"]) == str
     assert type(rep["changes"][0]["after"]) == str
     assert type(rep["changes"][0]["explanation"]) == str
+
+
+def test_agent_service_initialization():
+    """Test that AgentService initializes correctly."""
+    agent_service = AgentService(agent=AGENTS.MISTRAL, model="devstral-latest")
+    assert agent_service.agent == AGENTS.MISTRAL
+    assert agent_service.model == "devstral-latest"
+    assert agent_service.system_prompt is not None
+    assert len(agent_service.system_prompt) > 0
+
+
+@patch("quality.review.services.agent.AGENTS.get_client_class")
+def test_agent_service_missing_api_key(mock_get_client):
+    """Test that AgentService handles missing API key."""
+    mock_client_class = MagicMock()
+    mock_get_client.return_value = mock_client_class
+
+    # Mock the client to raise ValueError for missing API key
+    mock_client_instance = MagicMock()
+    mock_client_class.side_effect = ValueError("API key not found")
+
+    agent_service = AgentService(agent=AGENTS.MISTRAL, model="devstral-latest")
+
+    with pytest.raises(ValueError, match="API key not found"):
+        agent_service.ask_agent_for_review(review_input={"test": "data"})
+
+
+@patch("quality.review.services.agent.AGENTS.get_client_class")
+def test_agent_service_invalid_response_format(mock_get_client):
+    """Test that AgentService handles invalid response format."""
+    mock_client_class = MagicMock()
+    mock_get_client.return_value = mock_client_class
+
+    # Mock the client to return invalid response format
+    mock_client_instance = MagicMock()
+    mock_client_instance.ask.return_value = "invalid response format"
+    mock_client_class.return_value = mock_client_instance
+
+    agent_service = AgentService(agent=AGENTS.MISTRAL, model="devstral-latest")
+
+    with pytest.raises((ValueError, SyntaxError)):
+        agent_service.ask_agent_for_review(review_input={"test": "data"})
+
+
+@patch("quality.review.services.agent.AGENTS.get_client_class")
+def test_agent_service_empty_response(mock_get_client):
+    """Test that AgentService handles empty response."""
+    mock_client_class = MagicMock()
+    mock_get_client.return_value = mock_client_class
+
+    # Mock the client to return empty response
+    mock_client_instance = MagicMock()
+    mock_client_instance.ask.return_value = ""
+    mock_client_class.return_value = mock_client_instance
+
+    agent_service = AgentService(agent=AGENTS.MISTRAL, model="devstral-latest")
+
+    with pytest.raises((ValueError, SyntaxError)):
+        agent_service.ask_agent_for_review(review_input={"test": "data"})
+
+
+@patch("quality.review.services.agent.AGENTS.get_client_class")
+def test_agent_service_malformed_response(mock_get_client):
+    """Test that AgentService handles malformed JSON response."""
+    mock_client_class = MagicMock()
+    mock_get_client.return_value = mock_client_class
+
+    # Mock the client to return malformed JSON
+    mock_client_instance = MagicMock()
+    mock_client_instance.ask.return_value = '{"changes": ["malformed"}'
+    mock_client_class.return_value = mock_client_instance
+
+    agent_service = AgentService(agent=AGENTS.MISTRAL, model="devstral-latest")
+
+    with pytest.raises((ValueError, SyntaxError)):
+        agent_service.ask_agent_for_review(review_input={"test": "data"})
+
+
+@patch("quality.review.services.agent.AGENTS.get_client_class")
+def test_agent_service_empty_changes_list(mock_get_client):
+    """Test that AgentService handles empty changes list."""
+    mock_client_class = MagicMock()
+    mock_get_client.return_value = mock_client_class
+
+    # Mock the client to return valid response with empty changes
+    mock_client_instance = MagicMock()
+    mock_client_instance.ask.return_value = '{"changes": []}'
+    mock_client_class.return_value = mock_client_instance
+
+    agent_service = AgentService(agent=AGENTS.MISTRAL, model="devstral-latest")
+
+    result = agent_service.ask_agent_for_review(review_input={"test": "data"})
+    assert result == {"changes": []}
+
+
+@patch("quality.review.services.agent.AGENTS.get_client_class")
+def test_agent_service_missing_required_fields(mock_get_client):
+    """Test that AgentService handles response with missing required fields."""
+    mock_client_class = MagicMock()
+    mock_get_client.return_value = mock_client_class
+
+    # Mock the client to return response with missing fields
+    mock_client_instance = MagicMock()
+    mock_client_instance.ask.return_value = '{"changes": [{"line_number": 1}]}'
+    mock_client_class.return_value = mock_client_instance
+
+    agent_service = AgentService(agent=AGENTS.MISTRAL, model="devstral-latest")
+
+    result = agent_service.ask_agent_for_review(review_input={"test": "data"})
+    # Should still return the response even if fields are missing
+    assert "changes" in result
+    assert len(result["changes"]) == 1
+    assert result["changes"][0]["line_number"] == 1

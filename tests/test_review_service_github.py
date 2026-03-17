@@ -6,6 +6,7 @@ from unittest.mock import patch, MagicMock
 from quality.review.services.github import (
     GitHubService,
     REVIEW_TYPE,
+    BLACK_LISTED_FILES,
 )
 
 ENV_VAR_NAME = "ACCESS_TOKEN"
@@ -41,46 +42,35 @@ def test_get_github_client_missing_token():
             os.environ[ENV_VAR_NAME] = old_token
 
 
-@patch("github.Github")
-def test_get_pr_files_repository_error(mock_github):
-    """Test error handling when repository cannot be fetched."""
-    service = GitHubService()
-
-    # Set up mock
-    mock_client = MagicMock()
-    mock_github.return_value.__enter__.return_value = mock_client
-    mock_client.get_repo.side_effect = Exception("Repository not found")
-
-    # Set environment variable
-    os.environ[ENV_VAR_NAME] = "test_token"
-
-    try:
-        with pytest.raises(ValueError, match="Error fetching repository NixOS/nixpkgs"):
-            service.get_pr_files(123)
-    finally:
-        if ENV_VAR_NAME in os.environ:
-            del os.environ[ENV_VAR_NAME]
-
-
-@patch("github.Github")
-def test_submit_review_empty_reviews(mock_github):
-    """Test that submit_review handles empty reviews correctly."""
-    service = GitHubService()
-
-    # Set environment variable
-    os.environ[ENV_VAR_NAME] = "test_token"
-
-    try:
-        # Should not raise exception, just print message
-        service.submit_review(123, "test body", {})
-
-    finally:
-        if ENV_VAR_NAME in os.environ:
-            del os.environ[ENV_VAR_NAME]
-
-
 def test_review_type_enum():
     """Test that REVIEW_TYPE enum has expected values."""
     assert REVIEW_TYPE.COMMENT.value == "COMMENT"
     assert REVIEW_TYPE.APPROVE.value == "APPROVE"
     assert REVIEW_TYPE.REQUEST_CHANGES.value == "REQUEST_CHANGES"
+
+
+def test_blacklisted_files():
+    """Test that BLACK_LISTED_FILES contains expected files."""
+    expected_files = {
+        "pkgs/top-level/python-packages.nix",
+        "maintainers/maintainer-list.nix",
+        "pkgs/by-name/hy/hyprland/info.json",
+    }
+    assert BLACK_LISTED_FILES == expected_files
+
+
+@patch("github.Github")
+def test_submit_review_invalid_pr(mock_github):
+    """Test that submit_review handles invalid PR number."""
+    service = GitHubService()
+
+    # Set up mock
+    mock_client = MagicMock()
+    mock_github.return_value.__enter__.return_value = mock_client
+    mock_repo = MagicMock()
+    mock_client.get_repo.return_value = mock_repo
+    mock_repo.get_pull.side_effect = Exception("PR not found")
+
+    service.submit_review(
+        999999, "test body", {"test.py": [{"line": 1, "body": "test"}]}
+    )

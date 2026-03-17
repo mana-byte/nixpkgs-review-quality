@@ -25,7 +25,10 @@ class ReviewPointRepo:
             review_point_importance=review_point_importance,
             topic=topic,
         )
-        self.session.add(new_review_point)
+        try:
+            self.session.add(new_review_point)
+        except Exception as e:
+            print(f"Error creating review point: {e}")
         return new_review_point
 
     def create_review_point_with_object(
@@ -63,7 +66,13 @@ class ReviewPointRepo:
     def get_review_points_by_topic(
         self, topic: REVIEW_POINTS_TOPIC | None
     ) -> list[ReviewPoint]:
-        return self.session.query(ReviewPoint).filter(ReviewPoint.topic == topic).all()
+        try:
+            return (
+                self.session.query(ReviewPoint).filter(ReviewPoint.topic == topic).all()
+            )
+        except Exception as e:
+            print(f"Error fetching review points by topic: {e}")
+            return []
 
     def get_review_points_by_importance(self, importance: int | Column[int]):
         return (

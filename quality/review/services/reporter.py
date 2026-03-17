@@ -1,3 +1,6 @@
+from collections import defaultdict
+
+
 class ReporterService:
     """Write a human readable report for reviews in a .md file"""
 
@@ -8,9 +11,10 @@ class ReporterService:
         self.report += content + "\n\n"
 
     def __generate_report_str_for_review(self, review: dict[str, str]) -> str:
-        content = f"### File: {review['path']}\n"
-        content += f"**Line {review['line']}**: \n\n"
-        content += f"{review['body']}\n"
+        default_dict_review = defaultdict(str, review)
+        content = f"### File: {default_dict_review['path']}\n"
+        content += f"**Line {default_dict_review['line']}**: \n\n"
+        content += f"{default_dict_review['body']}\n"
         return content
 
     def produce_report_from_formatted_reviews(

@@ -9,7 +9,7 @@ def get_topic_by_builder_pattern(
     pr_file: str, pattern: str = r"\b\w*build\w*\b"
 ) -> REVIEW_POINTS_TOPIC | None:
     """Extracts the builder from the nix expression using regex and returns the corresponding REVIEW_POINTS_TOPIC."""
-    matches: list[str] = re.findall(pattern, pr_file, flags=re.IGNORECASE)
+    matches: list[str] = re.findall(pattern, pr_file)
     for match in matches:
         topic = REVIEW_POINTS_TOPIC.builder_to_topic(match)
         if topic:
