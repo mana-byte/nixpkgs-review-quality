@@ -1,4 +1,6 @@
 from typing import Any, final
+
+from mistralai import SDKError
 from quality.agents import AGENTS
 import ast
 
@@ -22,10 +24,14 @@ class AgentService:
         """
         Ask specified agent for code review for a specific review point
         """
-        client = self.agent_client(env_var_name=self.agent + "_API_KEY")
-        rep = client.ask(
-            system_prompt=self.system_prompt,
-            user_prompt=str(review_input),
-            model=self.model,
-        )
+        try:
+            client = self.agent_client(env_var_name=self.agent + "_API_KEY")
+            rep = client.ask(
+                system_prompt=self.system_prompt,
+                user_prompt=str(review_input),
+                model=self.model,
+            )
+        except SDKError as e:
+            print(f"Error during review generation (Check model name): {e}")
+            return {}
         return ast.literal_eval(rep)

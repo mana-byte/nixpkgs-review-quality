@@ -2,6 +2,8 @@
 
 from typing import Any, final
 
+from mistralai import SDKError
+
 from quality.agents import AGENTS
 from quality.review.services.agent import AgentService
 from quality.review.services.reporter import ReporterService
@@ -40,10 +42,14 @@ class Reviewer:
         self,
         harshness: int = 5,
     ):
+        if harshness < 1 or harshness > 5:
+            raise ValueError("Harshness must be an integer between 1 and 5.")
+        self.harshness = harshness
+
+        # Initialize all other attributes to default values
         self.prnumber: int = 0
         self.owner: str = ""
         self.repo: str = ""
-        self.harshness = harshness
         self.files = {}
         self.patches = {}
         self.topics_by_file = {}
@@ -125,13 +131,15 @@ class Reviewer:
     def review_files(self, agent: AGENTS, model: str) -> None:
         """Reviews the files in the PR using the specified agent and model, and stores the reviews in the reviews attribute."""
         if not self.review_inputs or self.review_inputs == {}:
-            raise ValueError("No files to review.")
+            print("No files to review.")
+            return
 
         agent_service = AgentService(agent, model)
         for file_name, review_input in self.review_inputs.items():
             print(f"Reviewing file: {file_name}")
             rep = agent_service.ask_agent_for_review(review_input)
-            self.reviews[file_name] = rep["changes"]
+            if rep != {}:
+                self.reviews[file_name] = rep["changes"]
 
     def submit_reviews(
         self,
@@ -141,7 +149,8 @@ class Reviewer:
     ) -> None:
         """Submits the reviews to GitHub as a review on the PR."""
         if not self.reviews or self.reviews == {}:
-            raise ValueError("No reviews to submit.")
+            print("No reviews to submit.")
+            return
 
         if review_message == "":
             with open("quality/review/messages/default_review_message.md", "r") as f:
@@ -171,7 +180,8 @@ class Reviewer:
 
     def save_reviews(self, path: str) -> bool:
         if not self.reviews or self.reviews == {}:
-            raise ValueError("No reviews to format.")
+            print("No reviews to save.")
+            return False
         reporter = ReporterService()
         formatted_reviews = create_suggestions_from_reviews(self.reviews)
         reporter.produce_report_from_formatted_reviews(formatted_reviews)

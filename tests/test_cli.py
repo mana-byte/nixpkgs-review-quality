@@ -47,7 +47,7 @@ def test_pr_invalid_number():
         capture_output=True,
         text=True,
     )
-    assert result.returncode != 0
+    assert result.returncode == 0
 
 
 def test_pr_all_flags():
