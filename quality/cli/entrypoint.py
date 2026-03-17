@@ -81,6 +81,12 @@ def create_parser() -> argparse.ArgumentParser:
         default="",
         help="Additional message to include in the review body.",
     )
+    _ = review_parser.add_argument(
+        "--save-report",
+        type=str,
+        default="",
+        help="Save the generated review report to a given file.",
+    )
 
     return parser
 

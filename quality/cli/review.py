@@ -20,3 +20,8 @@ def handle_reviewer(args):
         reviewer.submit_reviews(
             additional_review_message=args.message, review_type=args.review_type
         )
+    elif not args.save_report:
+        reviewer.print_reviews()
+
+    if args.save_report:
+        reviewer.save_reviews(args.save_report)

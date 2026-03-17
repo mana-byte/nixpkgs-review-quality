@@ -13,7 +13,7 @@ class AGENTS(str, Enum):
     MISTRAL = "MISTRAL"
     OPEN_AI = "OPEN_AI"
     # NOT IMPLEMENTED YET
-    CLAUDE = "CLAUDE"
+    # CLAUDE = "CLAUDE"
 
     @classmethod
     def get_client_class(cls, agent: "AGENTS") -> type[BaseClient]:
