@@ -23,11 +23,22 @@ class ReporterService:
         print(self.report)
 
     def save_report(self, file_path: str) -> bool:
-        print(f"Saving report to {file_path}...")
-        try:
-            with open(file_path, "w") as f:
+
+        def save_report_to_file(path: str):
+            with open(path, "w") as f:
                 _ = f.write(self.report)
-            return True
+
+        print(f"Saving report to {file_path}")
+        try:
+            save_report_to_file(file_path)
+        except IsADirectoryError:
+            if not file_path.endswith("/"):
+                file_path += "/"
+            file_path += "report.md"
+            print(
+                f"Provided path is a directory. Saving report to {file_path} instead..."
+            )
+            save_report_to_file(file_path)
         except Exception as e:
             print(f"Error saving report to {file_path}: {e}")
             return False

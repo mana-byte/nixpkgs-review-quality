@@ -6,7 +6,7 @@ from quality.agents import AGENTS
 from quality.review.services.agent import AgentService
 from quality.review.services.reporter import ReporterService
 from quality.review.utils import create_suggestions_from_reviews, number_each_line
-from quality.review_points.models.review_point import ReviewPoint
+from quality.review_points.models import ReviewPoint
 from quality.review.services.github import REVIEW_TYPE, GitHubService
 from quality.review.services.example import get_raw_examples_by_review_point
 from quality.review.services.topic import (
@@ -169,16 +169,13 @@ class Reviewer:
         reporter.produce_report_from_formatted_reviews(formatted_reviews)
         reporter.print_report()
 
-    def save_reviews(self, path: str) -> None:
+    def save_reviews(self, path: str) -> bool:
         if not self.reviews or self.reviews == {}:
             raise ValueError("No reviews to format.")
-        if path == "":
-            print("No path provided for saving the report. Using default path.")
-            path = f"review_report_{self.owner}_{self.repo}_{self.prnumber}.md"
         reporter = ReporterService()
         formatted_reviews = create_suggestions_from_reviews(self.reviews)
         reporter.produce_report_from_formatted_reviews(formatted_reviews)
-        _ = reporter.save_report(path)
+        return reporter.save_report(path)
 
 
 if __name__ == "__main__":
