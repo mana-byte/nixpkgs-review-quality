@@ -1,6 +1,7 @@
 # nixpkgs-review-quality
 
 Automate Nixpkgs PR reviews to reduce repetitive manual checks.
+**Note**: Currently only work with python builders.
 
 ## Features
 
