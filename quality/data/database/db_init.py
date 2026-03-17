@@ -1,12 +1,12 @@
 """Script to initialize the database for the review points application."""
 
 from sqlalchemy import create_engine
-from quality.review_points.models.base import Base
-from quality.review_points import DB_URL
+from quality.data.models.base import Base
+from quality.data import DB_URL
 
 # Importing models to ensure they are registered with SQLAlchemy's metadata
-from quality.review_points.models.review_point import ReviewPoint
-from quality.review_points.models.example import Example
+from quality.data.models.review_point import ReviewPoint
+from quality.data.models.example import Example
 
 
 def init_db():

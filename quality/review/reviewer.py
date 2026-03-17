@@ -8,14 +8,14 @@ from quality.agents import AGENTS
 from quality.review.services.agent import AgentService
 from quality.review.services.reporter import ReporterService
 from quality.review.utils import create_suggestions_from_reviews, number_each_line
-from quality.review_points.models import ReviewPoint
+from quality.data.models import ReviewPoint
 from quality.review.services.github import REVIEW_TYPE, GitHubService
 from quality.review.services.example import get_raw_examples_by_review_point
 from quality.review.services.topic import (
     get_review_points_by_topic,
     get_topic_by_builder_pattern,
 )
-from quality.review_points import REVIEW_POINTS_TOPIC
+from quality.data import REVIEW_POINTS_TOPIC
 
 
 @final

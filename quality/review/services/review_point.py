@@ -1,6 +1,6 @@
-from quality.review_points.models.review_point import ReviewPoint
-from quality.review_points.repositories.review_point_repo import ReviewPointRepo
-from quality.review_points.database.session import get_db
+from quality.data.models.review_point import ReviewPoint
+from quality.data.repositories.review_point_repo import ReviewPointRepo
+from quality.data.database.session import get_db
 
 
 def get_review_point_instructions_by_name(review_point_name: str) -> str | None:

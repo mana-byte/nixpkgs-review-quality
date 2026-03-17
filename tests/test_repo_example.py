@@ -1,8 +1,8 @@
 from collections.abc import Iterator
 from contextlib import contextmanager
-from quality.review_points.models.example import Example
-from quality.review_points.repositories.example_repo import ExampleRepo
-from quality.review_points.database.session import get_db
+from quality.data.models.example import Example
+from quality.data.repositories.example_repo import ExampleRepo
+from quality.data.database.session import get_db
 
 ID = 8999
 

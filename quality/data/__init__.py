@@ -5,7 +5,7 @@ Regroups DB_URL and REVIEW_POINTS_TOPIC enum for review points module.
 import os
 from enum import Enum
 
-DB_URL = os.getenv("DB_URL", "sqlite:///quality/review_points/review_points.db")
+DB_URL = os.getenv("DB_URL", "sqlite:///quality/data/review_points.db")
 
 
 class REVIEW_POINTS_TOPIC(str, Enum):

@@ -1,8 +1,8 @@
 import re
-from quality.review_points import REVIEW_POINTS_TOPIC
-from quality.review_points.models.review_point import ReviewPoint
-from quality.review_points.repositories.review_point_repo import ReviewPointRepo
-from quality.review_points.database.session import get_db
+from quality.data import REVIEW_POINTS_TOPIC
+from quality.data.models.review_point import ReviewPoint
+from quality.data.repositories.review_point_repo import ReviewPointRepo
+from quality.data.database.session import get_db
 
 
 def get_topic_by_builder_pattern(

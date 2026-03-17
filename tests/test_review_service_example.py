@@ -1,7 +1,7 @@
 from quality.review.services.example import get_raw_examples_by_review_point
-from quality.review_points.models import ReviewPoint, Example
-from quality.review_points.repositories.review_point_repo import ReviewPointRepo
-from quality.review_points.database.session import get_db
+from quality.data.models import ReviewPoint, Example
+from quality.data.repositories.review_point_repo import ReviewPointRepo
+from quality.data.database.session import get_db
 import ast
 
 

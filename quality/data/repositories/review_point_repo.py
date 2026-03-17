@@ -2,8 +2,8 @@
 
 from sqlalchemy import Column
 from sqlalchemy.orm import Session
-from quality.review_points.models.review_point import ReviewPoint
-from quality.review_points import REVIEW_POINTS_TOPIC
+from quality.data.models.review_point import ReviewPoint
+from quality.data import REVIEW_POINTS_TOPIC
 from typing import final
 
 

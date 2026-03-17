@@ -2,7 +2,7 @@
 
 from sqlalchemy import Column
 from sqlalchemy.orm import Session
-from quality.review_points.models.example import Example
+from quality.data.models.example import Example
 from typing import final
 
 

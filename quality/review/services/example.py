@@ -1,6 +1,6 @@
-from quality.review_points.models.review_point import ReviewPoint
-from quality.review_points.database.session import get_db
-from quality.review_points.repositories.example_repo import ExampleRepo
+from quality.data.models.review_point import ReviewPoint
+from quality.data.database.session import get_db
+from quality.data.repositories.example_repo import ExampleRepo
 
 
 def get_raw_examples_by_review_point(review_point: ReviewPoint) -> list[str]:

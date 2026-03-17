@@ -5,7 +5,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy import Column, Integer, String
 from .base import Base
 # Necessary import
-from quality.review_points.models.review_point import ReviewPoint
+from quality.data.models.review_point import ReviewPoint
 
 
 class Example(Base):

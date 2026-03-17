@@ -3,7 +3,7 @@
 from contextlib import contextmanager
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from quality.review_points import DB_URL
+from quality.data import DB_URL
 
 
 @contextmanager

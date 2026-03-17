@@ -3,7 +3,7 @@ from quality.review.services.topic import (
     get_topic_by_builder_pattern,
     get_review_points_by_topic,
 )
-from quality.review_points import REVIEW_POINTS_TOPIC
+from quality.data import REVIEW_POINTS_TOPIC
 from tests.test_repo_review_points import review_point
 
 

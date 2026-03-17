@@ -1,9 +1,9 @@
 from collections.abc import Iterator
 from contextlib import contextmanager
-from quality.review_points.models import ReviewPoint
-from quality.review_points.repositories.review_point_repo import ReviewPointRepo
-from quality.review_points.database.session import get_db
-from quality.review_points import REVIEW_POINTS_TOPIC
+from quality.data.models import ReviewPoint
+from quality.data.repositories.review_point_repo import ReviewPointRepo
+from quality.data.database.session import get_db
+from quality.data import REVIEW_POINTS_TOPIC
 
 ID = 8999
 

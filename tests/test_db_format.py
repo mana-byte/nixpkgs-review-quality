@@ -1,5 +1,5 @@
-from quality.review_points.database.session import get_db
-from quality.review_points.models import Example
+from quality.data.database.session import get_db
+from quality.data.models import Example
 import ast
 
 
